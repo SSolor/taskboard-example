@@ -57,3 +57,20 @@ def test_is_overdue(conn):
 def test_priority_label():
     assert service.priority_label(1) == "HIGH"
     assert service.priority_label(3) == "LOW"
+
+
+def test_build_report_all_cases(conn):
+    service.add_task(conn, "Plain")
+    service.add_task(conn, "Upcoming", due_date="2030-01-01")
+    service.add_task(conn, "Late low", priority=3, due_date="2020-01-01")
+    service.add_task(conn, "Late high", priority=1, due_date="2020-01-01")
+    done_id = service.add_task(conn, "Finished")
+    service.complete_task(conn, done_id)
+
+    report = service.build_report(service.list_tasks(conn), today=date(2026, 1, 1))
+
+    assert "!! Late high (OVERDUE, HIGH)" in report
+    assert "!  Late low (OVERDUE)" in report
+    assert "   Upcoming (due 2030-01-01)" in report
+    assert "   Plain" in report
+    assert "x  Finished" in report
