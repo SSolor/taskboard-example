@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+coverage.xml
+tasks.db
+.env
+.venv/
+.scannerwork/
