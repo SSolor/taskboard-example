@@ -1,0 +1,32 @@
+name: SonarQube Cloud
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # full history so SonarQube can attribute new code correctly
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests with coverage
+        run: python -m pytest --cov=taskboard --cov-report=xml:coverage.xml
+
+      - name: SonarQube Cloud scan
+        if: ${{ !cancelled() }}   # still scan if a test fails; the failure stays visible in the run
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
