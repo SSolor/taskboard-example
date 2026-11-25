@@ -30,8 +30,8 @@ def list_tasks(conn, status=None):
 
 
 def search_tasks(conn, term):
-    query = f"SELECT * FROM tasks WHERE title LIKE '%{term}%'"
-    return conn.execute(query).fetchall()
+    query = "SELECT * FROM tasks WHERE title LIKE ?"
+    return conn.execute(query, (f"%{term}%",)).fetchall()
 
 
 def is_overdue(task, today=None):
