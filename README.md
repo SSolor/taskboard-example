@@ -1,6 +1,6 @@
 # Taskboard
 
-A small command-line task tracker (Python 3.12, SQLite, pytest).
+A small command-line task tracker (Python 3.12, SQLite, pytest)
 
     python -m taskboard.cli add "Write report" --priority 1 --due 2026-12-01
     python -m taskboard.cli list
