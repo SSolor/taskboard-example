@@ -53,20 +53,17 @@ def priority_label(priority):
         return "UNKNOWN"
 
 
+def format_task_line(task, today=None):
+    if task["status"] != "open":
+        return f"x  {task['title']}"
+    if task["due_date"] is None:
+        return f"   {task['title']}"
+    if not is_overdue(task, today):
+        return f"   {task['title']} (due {task['due_date']})"
+    if task["priority"] == 1:
+        return f"!! {task['title']} (OVERDUE, HIGH)"
+    return f"!  {task['title']} (OVERDUE)"
+
+
 def build_report(tasks, today=None):
-    lines = []
-    for task in tasks:
-        if task["status"] == "open":
-            if task["due_date"] is not None:
-                if is_overdue(task, today):
-                    if task["priority"] == 1:
-                        lines.append(f"!! {task['title']} (OVERDUE, HIGH)")
-                    else:
-                        lines.append(f"!  {task['title']} (OVERDUE)")
-                else:
-                    lines.append(f"   {task['title']} (due {task['due_date']})")
-            else:
-                lines.append(f"   {task['title']}")
-        else:
-            lines.append(f"x  {task['title']}")
-    return "\n".join(lines)
+    return "\n".join(format_task_line(task, today) for task in tasks)
